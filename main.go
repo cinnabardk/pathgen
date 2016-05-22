@@ -54,6 +54,11 @@ func main() {
 	fmt.Printf("Total strings: %d", StrLen)
 }
 
+type paths struct {
+	name string
+	p    []paths
+}
+
 func GenPaths(n ...int) ([]string, error) {
 
 	//rand.Seed(time.Now().UnixNano())
@@ -76,9 +81,21 @@ func GenPaths(n ...int) ([]string, error) {
 
 	spew.Dump(s)
 
-	for i := range s {
-		for i2 := range s[i] {
-			output = append(output, word+"/"+s[i][i2])
+	var call = func(root string, s []string) []string {
+		for _, str := range s {
+			output = append(output, root+"/"+str)
+		}
+		return output[len(output)-len(s):]
+	}
+
+	new := s[0]
+	call("", new)
+
+	spew.Dump(new)
+
+	for i := 1; i < len(n); i++ {
+		for _, str := range new {
+			new = call(str, s[i])
 		}
 	}
 
