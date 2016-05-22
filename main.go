@@ -1,11 +1,10 @@
 package main
 
 import (
-	"errors"
+	//	"errors"
 	"fmt"
+	"github.com/davecgh/go-spew/spew"
 	"log"
-	"math/rand"
-	"time"
 )
 
 var (
@@ -15,7 +14,7 @@ var (
 )
 
 func init() {
-	for _, v := range []string{"/",
+	for _, v := range []string{
 		"butterfly",
 		"hero",
 		"action",
@@ -44,7 +43,7 @@ func init() {
 }
 
 func main() {
-	s, err := GenPaths(2, 3, 20)
+	s, err := GenPaths(2, 3, 5)
 	if err != nil {
 		log.Println(err)
 	}
@@ -59,33 +58,25 @@ func GenPaths(n ...int) ([]string, error) {
 
 	//rand.Seed(time.Now().UnixNano())
 
-	var s = make([][]string, len(n))
-	var output = []string{strings[0]}
-	var usedStrings = make([]int, len(n))
+	var (
+		s      = make([][]string, len(n))
+		output = []string{"/"}
+	)
 
 	for i, num := range n {
-		if num > StrLen-i {
-			return output, errors.New(fmt.Sprintf("int no %d with a value of %d has exceeded the maximum of %d available strings", i, num, StrLen-i))
-		}
 
-	start:
-		rnd := rand.Intn(StrLen)
-		for _, u := range usedStrings {
-			if rnd == u {
-				if rnd > StrLen {
-					goto start
-				} else {
-					rnd++
-				}
+		for i2 := 0; i2 < num; i2++ {
+			for rndStr, _ := range strings {
+				s[i] = append(s[i], rndStr)
+				delete(strings, rndStr)
+				break
 			}
 		}
-		usedStrings[i] = rnd
-
-		s[i] = append(s[i], strings[rnd])
 	}
 
+	spew.Dump(s)
+
 	for i := range s {
-		word := s[i][0]
 		for i2 := range s[i] {
 			output = append(output, word+"/"+s[i][i2])
 		}
